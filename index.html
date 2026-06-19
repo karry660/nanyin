@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>南音寻韵 · 世界非遗南音文化传承</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== 全局 ===== */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter','Noto Serif SC',sans-serif; background-color:#fefaf5; color:#2c2418; line-height:1.5; scroll-behavior:smooth; }
+        :root { --nanyin-red:#b23c2c; --paper-white:#fffaf3; --wood-dark:#5a3e2b; --wood-light:#8b694c; }
+        .container { max-width:1280px; margin:0 auto; padding:0 24px; }
+
+        /* ===== 导航 ===== */
+        .navbar { background:var(--paper-white); box-shadow:0 4px 20px rgba(0,0,0,0.03); position:sticky; top:0; z-index:1000; backdrop-filter:blur(2px); border-bottom:1px solid rgba(180,130,80,0.2); }
+        .nav-container { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; flex-wrap:wrap; }
+        .logo h1 { font-size:1.7rem; font-weight:600; letter-spacing:2px; color:var(--nanyin-red); }
+        .logo p { font-size:0.75rem; color:var(--wood-light); }
+        .nav-links { display:flex; gap:28px; list-style:none; flex-wrap:wrap; }
+        .nav-links a { text-decoration:none; font-weight:500; color:var(--wood-dark); transition:0.2s; }
+        .nav-links a:hover { color:var(--nanyin-red); border-bottom:2px solid var(--nanyin-red); }
+        .menu-toggle { display:none; font-size:1.8rem; cursor:pointer; }
+        @media (max-width:880px){ .nav-links{ display:none; width:100%; flex-direction:column; gap:12px; margin-top:16px; text-align:center; } .nav-links.active{ display:flex; } .menu-toggle{ display:block; } }
+
+        /* ===== 轮播 ===== */
+        .hero-carousel { position:relative; width:100%; height:400px; overflow:hidden; background:#2c2418; }
+        .carousel-slide { position:absolute; width:100%; height:100%; background-size:cover; background-position:center; opacity:0; transition:opacity 0.8s ease; }
+        .carousel-slide.active { opacity:1; }
+        .carousel-control { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.4); color:white; border:none; font-size:2rem; padding:10px 16px; cursor:pointer; border-radius:50%; z-index:10; transition:background 0.3s; }
+        .carousel-control:hover { background:rgba(0,0,0,0.7); }
+        .carousel-control.prev { left:10px; }
+        .carousel-control.next { right:10px; }
+        .carousel-indicators { position:absolute; bottom:15px; left:50%; transform:translateX(-50%); display:flex; gap:10px; z-index:10; }
+        .carousel-indicators span { width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.5); cursor:pointer; transition:background 0.3s; }
+        .carousel-indicators span.active { background:white; }
+        @media (max-width:768px){ .hero-carousel{ height:250px; } .carousel-control{ font-size:1.5rem; padding:6px 12px; } }
+
+        /* ===== 通用板块 ===== */
+        section { padding:70px 0; border-bottom:1px solid #f0e3d4; }
+        .section-title { font-size:2.2rem; font-weight:600; position:relative; display:inline-block; margin-bottom:48px; font-family:'Noto Serif SC',serif; color:var(--wood-dark); }
+        .section-title:after { content:''; position:absolute; bottom:-12px; left:0; width:60px; height:3px; background:var(--nanyin-red); }
+        .grid-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:32px; }
+        .card { background:white; border-radius:24px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.05); transition:transform 0.25s ease,box-shadow 0.3s; border:1px solid #f0e2d2; cursor:pointer; }
+        .card:hover { transform:translateY(-6px); box-shadow:0 18px 30px rgba(0,0,0,0.1); }
+        .card-img { height:180px; background:#e9dfd1; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+        .card-img img { width:100%; height:100%; object-fit:cover; }
+        .card-content { padding:20px; }
+        .card-content h3 { font-size:1.3rem; margin-bottom:8px; color:var(--nanyin-red); }
+        .card-content p { color:#5b4b38; font-size:0.9rem; }
+        .badge { background:#f7ede2; padding:4px 12px; border-radius:40px; font-size:0.75rem; display:inline-block; margin-top:8px; }
+        .btn-sm { background:transparent; border:1px solid var(--nanyin-red); padding:6px 16px; border-radius:40px; color:var(--nanyin-red); font-weight:500; cursor:pointer; transition:0.2s; font-size:0.8rem; display:inline-block; margin-top:8px; }
+        .btn-sm:hover { background:var(--nanyin-red); color:white; }
+
+        /* ===== 模态框 ===== */
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.85); z-index:2000; justify-content:center; align-items:center; overflow-y:auto; padding:20px; }
+        .modal-content { background:#fffaf3; max-width:800px; width:100%; border-radius:32px; padding:28px; position:relative; box-shadow:0 20px 40px rgba(0,0,0,0.3); animation:fadeInUp 0.3s ease; }
+        @keyframes fadeInUp { from{ opacity:0; transform:translateY(30px); } to{ opacity:1; transform:translateY(0); } }
+        .close-modal { position:absolute; top:20px; right:24px; font-size:28px; font-weight:bold; color:#8b694c; cursor:pointer; transition:0.2s; background:none; border:none; }
+        .close-modal:hover { color:var(--nanyin-red); }
+        .modal-title { font-size:1.8rem; color:var(--nanyin-red); margin-bottom:16px; padding-right:30px; }
+
+        /* 模态框内图片画廊 */
+        .modal-media { margin:20px 0; background:#efe2d4; border-radius:24px; overflow:hidden; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:10px; }
+        .modal-media img { width:calc(33.33% - 6px); height:auto; object-fit:cover; border-radius:12px; cursor:pointer; transition:0.2s; }
+        .modal-media img:hover { transform:scale(1.03); }
+
+        /* 乐器图片强制 3:4 */
+        .modal-media.instrument-gallery img { aspect-ratio:3/4; }
+
+        /* 视频容器 16:9 */
+        .modal-media video { width:100%; aspect-ratio:16/9; background:#000; border-radius:12px; cursor:pointer; }
+
+        .modal-audio { margin:20px 0; }
+        .modal-desc { font-size:1rem; line-height:1.6; color:#2c2418; margin:20px 0; }
+        .info-tip { background:#f0e7dc; padding:12px; border-radius:20px; font-size:0.85rem; color:#7a5a44; text-align:center; }
+
+        /* ===== 灯箱（放大查看） ===== */
+        .lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; justify-content:center; align-items:center; padding:30px; box-sizing:border-box; }
+        .lightbox-content { position:relative; max-width:90%; max-height:90%; display:flex; justify-content:center; align-items:center; }
+        .lightbox-content img { max-width:100%; max-height:90vh; object-fit:contain; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.8); }
+        .lightbox-content video { max-width:100%; max-height:90vh; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.8); background:#000; }
+        .lightbox-close { position:absolute; top:-40px; right:-40px; color:white; font-size:40px; cursor:pointer; background:none; border:none; transition:0.2s; }
+        .lightbox-close:hover { color:#ddd; transform:scale(1.1); }
+        @media (max-width:768px){ .lightbox-close { top:10px; right:10px; font-size:30px; } .lightbox-content { max-width:100%; max-height:80%; } }
+
+        /* ===== 论坛 ===== */
+        .forum-list { background:#fff8f0; border-radius:28px; padding:20px; }
+        .forum-post { padding:20px 0; border-bottom:1px solid #eedbcb; }
+        .post-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+        .post-title { font-weight:600; font-size:1.1rem; }
+        .post-meta { color:#8b694c; font-size:0.8rem; }
+        .post-actions { display:flex; gap:16px; align-items:center; margin:10px 0; }
+        .like-btn { background:none; border:none; color:var(--nanyin-red); cursor:pointer; font-size:1rem; }
+        .like-btn:hover { color:#d65c48; }
+        .like-count { font-weight:bold; margin-left:4px; }
+        .comment-area { margin-top:12px; }
+        .comment-area textarea { width:100%; border:1px solid #ddd; border-radius:16px; padding:10px; resize:vertical; font-family:inherit; }
+        .comment-area button { background:var(--nanyin-red); color:white; border:none; padding:8px 20px; border-radius:40px; cursor:pointer; margin-top:8px; }
+        .comment-list { margin-top:12px; background:#f5ede4; border-radius:16px; padding:12px; }
+        .comment-item { padding:6px 0; border-bottom:1px dashed #e0d3c6; font-size:0.9rem; }
+        .comment-item strong { color:var(--nanyin-red); }
+
+        /* ===== 游戏 ===== */
+        .game-container { background:#fff7ef; border-radius:32px; padding:30px 24px; box-shadow:0 12px 28px rgba(0,0,0,0.05); margin-top:20px; }
+        .game-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:28px; }
+        .game-stats { background:#e9ddd0; padding:10px 20px; border-radius:60px; font-weight:500; }
+        .reset-btn { background:var(--nanyin-red); border:none; color:white; padding:8px 24px; border-radius:40px; cursor:pointer; font-weight:500; }
+        .memory-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:700px; margin:0 auto; }
+        .memory-card { aspect-ratio:1/1; background:linear-gradient(145deg,#fff0e0,#ffe6d2); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:2rem; cursor:pointer; box-shadow:0 6px 0 #c2a074; transition:0.1s linear; color:var(--wood-dark); }
+        .memory-card.flipped, .memory-card.matched { background:#f7e9db; box-shadow:0 2px 6px rgba(0,0,0,0.1); transform:scale(0.98); }
+        .memory-card.matched { background:#cfe6cf; color:#2a5c2a; text-decoration:line-through; opacity:0.7; cursor:default; animation:matchPulse 0.5s; }
+        @keyframes matchPulse { 0%{ transform:scale(1); } 50%{ transform:scale(1.2); background:#a8d5a8; } 100%{ transform:scale(1); } }
+        .memory-card img { width:80%; height:80%; object-fit:contain; border-radius:12px; }
+        .win-message { text-align:center; margin-top:30px; font-size:1.3rem; font-weight:bold; color:var(--nanyin-red); }
+        .timer { font-size:1.2rem; font-weight:600; color:var(--wood-dark); }
+
+        /* ===== 南音介绍 ===== */
+        .intro-section { background:linear-gradient(135deg,#faf0e6,#f5e3d0); border-radius:32px; padding:40px; margin:20px 0; display:flex; flex-wrap:wrap; gap:30px; align-items:center; }
+        .intro-text { flex:2; min-width:280px; }
+        .intro-text h2 { font-size:2rem; color:var(--nanyin-red); margin-bottom:16px; }
+        .intro-text p { font-size:1rem; line-height:1.8; color:#3e342a; }
+        .intro-img { flex:1; min-width:200px; background:#d9ccbb; border-radius:24px; overflow:hidden; height:200px; display:flex; align-items:center; justify-content:center; }
+        .intro-img img { width:100%; height:100%; object-fit:cover; }
+
+        /* ===== 文创按钮 ===== */
+        .btn-buy { background:var(--nanyin-red); color:white; border:none; padding:6px 18px; border-radius:40px; cursor:pointer; font-size:0.8rem; transition:0.2s; text-decoration:none; display:inline-block; margin-top:10px; }
+        .btn-buy:hover { background:#8f2d1f; }
+
+        /* ===== 页脚 ===== */
+        footer { background:#2e261d; color:#d4c3b0; padding:40px 0; text-align:center; }
+        i, .fas { margin-right:6px; }
+    </style>
+</head>
+<body>
+
+<!-- ===== 导航栏 ===== -->
+<nav class="navbar">
+    <div class="nav-container container">
+        <div class="logo"><h1>南音寻韵</h1><p>· 世界非遗 · 千年雅乐</p></div>
+        <div class="menu-toggle" id="mobileMenu"><i class="fas fa-bars"></i></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#intro">南音介绍</a></li>
+            <li><a href="#instruments">乐器</a></li>
+            <li><a href="#musiczone">乐曲</a></li>
+            <li><a href="#materialMV">MV</a></li>
+            <li><a href="#cultural">文创</a></li>
+            <li><a href="#forum">论坛</a></li>
+            <li><a href="#creation">创作</a></li>
+            <li><a href="#game">游戏</a></li>
+            <li><a href="#origin">原素材</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ===== 主题图片轮播（4张） ===== -->
+<div class="hero-carousel" id="heroCarousel">
+    <!-- 替换下方 background-image 为你的图片地址 -->
+    <div class="carousel-slide active" style="background-image: url('https://placehold.co/1920x600/5a3e2b/ffffff?text=主题图1-请替换');"></div>
+    <div class="carousel-slide" style="background-image: url('https://placehold.co/1920x600/8b694c/ffffff?text=主题图2-请替换');"></div>
+    <div class="carousel-slide" style="background-image: url('https://placehold.co/1920x600/b23c2c/ffffff?text=主题图3-请替换');"></div>
+    <div class="carousel-slide" style="background-image: url('https://placehold.co/1920x600/2c2418/ffffff?text=主题图4-请替换');"></div>
+    <button class="carousel-control prev" id="prevSlide"><i class="fas fa-chevron-left"></i></button>
+    <button class="carousel-control next" id="nextSlide"><i class="fas fa-chevron-right"></i></button>
+    <div class="carousel-indicators" id="indicators"></div>
+</div>
+
+<!-- ===== 主内容 ===== -->
+<main>
+
+    <!-- 1. 南音介绍（带图片） -->
+    <section id="intro">
+        <div class="container">
+            <div class="intro-section">
+                <div class="intro-text">
+                    <h2>🎵 南音 · 千年雅乐</h2>
+                    <p>南音，又称“南管”“弦管”，是中国现存最古老的乐种之一，被誉为“中国音乐史上的活化石”。它发源于福建泉州，用闽南语演唱，以琵琶、洞箫、三弦、二弦等乐器合奏，曲调古朴典雅，唱腔婉转细腻。2006年，南音被列入国家级非物质文化遗产名录，2009年入选联合国教科文组织《人类非物质文化遗产代表作名录》。</p>
+                    <p style="margin-top:12px;">南音传承千年，承载着中原古音与闽南文化，是中华优秀传统文化的瑰宝。让我们共同守护这份千年雅乐，让古韵新声不绝于耳。</p>
+                </div>
+                <div class="intro-img">
+                    <!-- 替换 src 为你的图片地址 -->
+                    <img src="https://placehold.co/400x300/e9dfd1/8b694c?text=南音介绍图-请替换" alt="南音介绍">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. 乐器介绍（上四管 + 下四管） -->
+    <section id="instruments">
+        <div class="container">
+            <h2 class="section-title">🎵 南音乐器 · 上四管</h2>
+            <div class="grid-cards">
+                <!-- 每个卡片封面显示图片，替换 src 为你的封面图（建议与模态框第一张图一致） -->
+                <div class="card" data-modal="modal-pipa">
+                    <div class="card-img"><img src="pipa2.png"南音琵琶"></div>
+                    <div class="card-content"><h3>南音琵琶</h3><p>曲项琵琶，横抱弹奏，音色古雅。</p><span class="badge">主奏乐器</span></div>
+                </div>
+                <div class="card" data-modal="modal-xiao">
+                    <div class="card-img"><img src="donxiao1.jpg" alt="洞箫"></div>
+                    <div class="card-content"><h3>洞箫</h3><p>十目九节，尺八遗韵，苍凉悠远。</p><span class="badge">管乐之君</span></div>
+                </div>
+                <div class="card" data-modal="modal-sanxian">
+                    <div class="card-img"><img src="sanxian1.jpg" alt="三弦"></div>
+                    <div class="card-content"><h3>三弦</h3><p>音色浑厚，中音骨干。</p><span class="badge">弹拨中坚</span></div>
+                </div>
+                <div class="card" data-modal="modal-erxian">
+                    <div class="card-img"><img src="erxian1.jpg" alt="二弦"></div>
+                    <div class="card-content"><h3>二弦</h3><p>高亢明亮，拉弦主心骨。</p><span class="badge">拉弦乐器</span></div>
+                </div>
+            </div>
+            <h2 class="section-title" style="margin-top:30px;">🥁 南音乐器 · 下四管</h2>
+            <div class="grid-cards">
+                <div class="card" data-modal="modal-xiangzhan">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=响盏封面-请替换" alt="响盏"></div>
+                    <div class="card-content"><h3>响盏</h3><p>小铜盏，击节清脆。</p><span class="badge">打击领奏</span></div>
+                </div>
+                <div class="card" data-modal="modal-xiaojiao">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=小叫封面-请替换" alt="小叫"></div>
+                    <div class="card-content"><h3>小叫</h3><p>响盏之辅，音色高亮。</p><span class="badge">附和点缀</span></div>
+                </div>
+                <div class="card" data-modal="modal-shuangling">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=双铃封面-请替换" alt="双铃"></div>
+                    <div class="card-content"><h3>双铃</h3><p>双铃摇动，节奏清脆。</p><span class="badge">节奏装饰</span></div>
+                </div>
+                <div class="card" data-modal="modal-sibao">
+                    <div class="card-img"><img src="sibao1.jpg" alt="四宝"></div>
+                    <div class="card-content"><h3>四宝</h3><p>四片竹板，互击作响。</p><span class="badge">竹击节奏</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 乐曲专区 -->
+    <section id="musiczone">
+        <div class="container"><h2 class="section-title">🎵 乐曲专区 · 南音古谱</h2>
+            <div class="grid-cards">
+                <div class="card" data-modal="modal-meihua">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=梅花操封面-请替换" alt="梅花操"></div>
+                    <div class="card-content"><h3>《梅花操》</h3><p>四大名谱之一，傲雪凌霜。</p></div>
+                </div>
+                <div class="card" data-modal="modal-zouma">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=走马封面-请替换" alt="走马"></div>
+                    <div class="card-content"><h3>《走马》</h3><p>八骏奔腾，节奏明快。</p></div>
+                </div>
+                <div class="card" data-modal="modal-sishi">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=四时景封面-请替换" alt="四时景"></div>
+                    <div class="card-content"><h3>《四时景》</h3><p>春夏秋冬，四季景致。</p></div>
+                </div>
+                <div class="card" data-modal="modal-chenshang">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=趁赏花灯封面-请替换" alt="趁赏花灯"></div>
+                    <div class="card-content"><h3>《趁赏花灯》</h3><p>指套名曲，元宵佳景。</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 素材MV专区 -->
+    <section id="materialMV">
+        <div class="container"><h2 class="section-title">🎬 素材 MV · 影音典藏</h2>
+            <div class="grid-cards">
+                <div class="card" data-modal="modal-bainiao">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=百鸟归巢封面-请替换" alt="百鸟归巢"></div>
+                    <div class="card-content"><h3>《百鸟归巢》</h3><p>央视春晚同款，南音新声。</p></div>
+                </div>
+                <div class="card" data-modal="modal-zhaojun">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=昭君出塞封面-请替换" alt="昭君出塞"></div>
+                    <div class="card-content"><h3>《昭君出塞》</h3><p>跨界MV，南音唱腔。</p></div>
+                </div>
+                <div class="card" data-modal="modal-doc">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=纪录片封面-请替换" alt="南音纪录片"></div>
+                    <div class="card-content"><h3>南音纪录片</h3><p>指尖传承，艺术家访谈。</p></div>
+                </div>
+                <div class="card" data-modal="modal-teach">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=教学MV封面-请替换" alt="教学MV"></div>
+                    <div class="card-content"><h3>免费教学MV</h3><p>入门指法，琵琶/洞箫。</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. 文创专区（带跳转链接） -->
+    <section id="cultural">
+        <div class="container"><h2 class="section-title">🏺 文创专区 · 独创南音雅物</h2>
+            <div class="grid-cards">
+                <div class="card">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=文创盖杯-请替换" alt="文创盖杯"></div>
+                    <div class="card-content"><h3>「梅花操」汝窑盖杯</h3><p>工尺谱纹样，限量独创。</p><a href="#" class="btn-buy" target="_blank">前往购买</a></div>
+                </div>
+                <div class="card">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=丝绸卷轴-请替换" alt="丝绸卷轴"></div>
+                    <div class="card-content"><h3>南音指谱丝绸卷轴</h3><p>手工仿古工尺谱。</p><a href="#" class="btn-buy" target="_blank">查看详情</a></div>
+                </div>
+                <div class="card">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=胸针-请替换" alt="胸针"></div>
+                    <div class="card-content"><h3>南音乐器胸针礼盒</h3><p>琵琶·洞箫迷你徽章。</p><a href="#" class="btn-buy" target="_blank">立即购买</a></div>
+                </div>
+                <div class="card">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=手账-请替换" alt="手账"></div>
+                    <div class="card-content"><h3>《南音遗韵》艺术手账</h3><p>南音知识，原始素材插画。</p><a href="#" class="btn-buy" target="_blank">预购</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. 非遗音乐创作 -->
+    <section id="creation">
+        <div class="container"><h2 class="section-title">✨ 非遗音乐创作 · 古韵新声</h2>
+            <div class="grid-cards">
+                <div class="card" data-modal="modal-dianzi">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=电子南音封面-请替换" alt="电子南音"></div>
+                    <div class="card-content"><h3>电子南音《刺桐幻梦》</h3><p>南音腔韵与氛围电子融合。</p></div>
+                </div>
+                <div class="card" data-modal="modal-shinei">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=室内乐封面-请替换" alt="室内乐"></div>
+                    <div class="card-content"><h3>南音室内乐《丝路南音》</h3><p>中西器乐交织。</p></div>
+                </div>
+                <div class="card" data-modal="modal-rock">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=摇滚封面-请替换" alt="摇滚"></div>
+                    <div class="card-content"><h3>南音摇滚 · 阮厝的歌</h3><p>改编《梅花操》摇滚版。</p></div>
+                </div>
+                <div class="card" data-modal="modal-remix">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=电音封面-请替换" alt="电音"></div>
+                    <div class="card-content"><h3>南音电音Remix企划</h3><p>《走马》Trap版。</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. 非遗论坛（点赞+留言） -->
+    <section id="forum">
+        <div class="container"><h2 class="section-title">📖 非遗音乐论坛 · 弦友共话</h2>
+            <div class="forum-list" id="forumList"></div>
+        </div>
+    </section>
+
+    <!-- 8. 趣味游戏 -->
+    <section id="game">
+        <div class="container"><h2 class="section-title">🎮 南音雅乐 · 记忆挑战</h2>
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-stats">✅ 配对成功: <span id="matchCount">0</span> / <span id="totalPairs">8</span></div>
+                    <div class="timer">⏱️ <span id="timerDisplay">00:00</span></div>
+                    <button class="reset-btn" id="resetGameBtn"><i class="fas fa-redo-alt"></i> 洗牌重开</button>
+                </div>
+                <div id="memoryBoard" class="memory-grid"></div>
+                <div id="winMessage" class="win-message"></div>
+                <p style="text-align:center; margin-top:24px; font-size:0.85rem;"><i class="fas fa-lightbulb"></i> 点击卡片配对的乐器图片，最快完成者胜！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. 原素材专区 -->
+    <section id="origin">
+        <div class="container"><h2 class="section-title">📜 原素材 · 南音母本库</h2>
+            <div class="grid-cards">
+                <div class="card" data-modal="modal-gongche">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=工尺谱封面-请替换" alt="工尺谱"></div>
+                    <div class="card-content"><h3>工尺谱原稿扫描件</h3><p>清代南音手抄谱数字化。</p></div>
+                </div>
+                <div class="card" data-modal="modal-oldrec">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=老录音封面-请替换" alt="老录音"></div>
+                    <div class="card-content"><h3>1950s南音老录音</h3><p>田野录音，前辈口传曲韵。</p></div>
+                </div>
+                <div class="card" data-modal="modal-photo">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=老照片封面-请替换" alt="老照片"></div>
+                    <div class="card-content"><h3>泉州南音社老照片集</h3><p>民国至80年代演出纪实。</p></div>
+                </div>
+                <div class="card" data-modal="modal-wav">
+                    <div class="card-img"><img src="https://placehold.co/400x300/e9dfd1/8b694c?text=曲库封面-请替换" alt="曲库"></div>
+                    <div class="card-content"><h3>南音原始曲库WAV</h3><p>无损格式经典录音。</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer><div class="container"><p><i class="fas fa-fingerprint"></i> 南音寻韵 · 守护千年雅乐 | 世界非物质文化遗产南音 传承数字平台</p></div></footer>
+
+<!-- ===== 灯箱（放大查看） ===== -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+    <div class="lightbox-content" id="lightboxContent">
+        <!-- 动态插入图片或视频 -->
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ===== 所有模态框（与之前一致，乐器图片为3:4） ===== -->
+<!-- 以下模态框保持不变，你只需替换其中的图片和音频源即可 -->
+<!-- ============================================================ -->
+
+<!-- 乐器 8 个（已加 instrument-gallery，强制3:4） -->
+<div id="modal-pipa" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">南音琵琶</div><div class="modal-media instrument-gallery"><img src="pipa2.png" alt="琵琶1"><img src="pipa3.png"琵琶2"><img src="pipa4.jpg" alt="琵琶3"></div><div class="modal-audio"><p>🎵 试听：</p><audio controls src="placeholder.mp3" style="width:100%">您的浏览器不支持音频</audio></div><div class="modal-desc"><p>南音琵琶是南音“上四管”核心乐器，曲项、横抱，音色古雅醇厚。</p></div><div class="info-tip">💡 替换图片和音频文件</div></div></div>
+
+<div id="modal-xiao" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">洞箫</div><div class="modal-media instrument-gallery"><img src="donxiao1.jpg"><img src="donxiao2.jpg"><img src="donxiao3.jpg"></div><div class="modal-audio"><audio controls src="placeholder.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>洞箫十目九节，尺八遗韵，苍凉悠远。</p></div><div class="info-tip">替换为您的洞箫图片与音频</div></div></div>
+
+<div id="modal-sanxian" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">三弦</div><div class="modal-media instrument-gallery"><img src="sanxian1.jpg"><img src="sanxian2.jpg"><img src="sanxian3.jpg"></div><div class="modal-audio"><audio controls src="placeholder.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>三弦音色浑厚，中音骨干，增添古朴厚重感。</p></div><div class="info-tip">替换</div></div></div>
+
+<div id="modal-erxian" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">二弦</div><div class="modal-media instrument-gallery"><img src="erxian1.jpg"><img src="erxian2.jpg"><img src="erxian3.jpg"></div><div class="modal-audio"><audio controls src="placeholder.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>二弦高亢明亮，与琵琶洞箫组成丝竹核心。</p></div><div class="info-tip">替换</div></div></div>
+
+<div id="modal-xiangzhan" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">响盏</div><div class="modal-media instrument-gallery"><img src="https://placehold.co/300x400/8b694c/fff?text=响盏1-请替换"><img src="https://placehold.co/300x400/5a3e2b/fff?text=响盏2-请替换"><img src="https://placehold.co/300x400/b23c2c/fff?text=响盏3-请替换"></div><div class="modal-audio"><audio controls src="placeholder.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>小铜盏，击节清脆，烘托热闹气氛。</p></div><div class="info-tip">替换</div></div></div>
+
+<div id="modal-xiaojiao" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">小叫</div><div class="modal-media instrument-gallery"><img src="https://placehold.co/300x400/8b694c/fff?text=小叫1-请替换"><img src="https://placehold.co/300x400/5a3e2b/fff?text=小叫2-请替换"><img src="https://placehold.co/300x400/b23c2c/fff?text=小叫3-请替换"></div><div class="modal-audio"><audio controls src="placeholder.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>响盏之辅，音色高亮，如鸟鸣呼应。</p></div><div class="info-tip">替换</div></div></div>
+
+<div id="modal-shuangling" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">双铃</div><div class="modal-media instrument-gallery"><img src="https://placehold.co/300x400/8b694c/fff?text=双铃1-请替换"><img src="https://placehold.co/300x400/5a3e2b/fff?text=双铃2-请替换"><img src="https://placehold.co/300x400/b23c2c/fff?text=双铃3-请替换"></div><div class="modal-audio"><audio controls src="placeholder.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>双铃摇动，节奏清脆，增加灵动感。</p></div><div class="info-tip">替换</div></div></div>
+
+<div id="modal-sibao" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">四宝</div><div class="modal-media instrument-gallery"><img src="sibao1.jpg"><img src="sibao2.jpg"><img src="sibao3.jpg"></div><div class="modal-audio"><audio controls src="placeholder.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>四片竹板，互击作响，古朴有力。</p></div><div class="info-tip">替换</div></div></div>
+
+<!-- 乐曲 4 个（无 instrument-gallery，自适应） -->
+<div id="modal-meihua" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">《梅花操》</div><div class="modal-media"><img src="https://placehold.co/300x200/8b694c/fff?text=梅花1-请替换"><img src="https://placehold.co/300x200/5a3e2b/fff?text=梅花2-请替换"><img src="https://placehold.co/300x200/b23c2c/fff?text=梅花3-请替换"></div><div class="modal-audio"><audio controls src="meihua.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>南音四大名谱之一，借物咏志，傲雪凌霜。</p></div><div class="info-tip">替换图片和音频</div></div></div>
+<div id="modal-zouma" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">《走马》</div><div class="modal-media"><img src="https://placehold.co/300x200/8b694c/fff?text=走马1-请替换"><img src="https://placehold.co/300x200/5a3e2b/fff?text=走马2-请替换"><img src="https://placehold.co/300x200/b23c2c/fff?text=走马3-请替换"></div><div class="modal-audio"><audio controls src="zouma.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>八骏奔腾，节奏明快，传统“十三套”经典。</p></div><div class="info-tip">替换</div></div></div>
+<div id="modal-sishi" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">《四时景》</div><div class="modal-media"><img src="https://placehold.co/300x200/8b694c/fff?text=四时1-请替换"><img src="https://placehold.co/300x200/5a3e2b/fff?text=四时2-请替换"><img src="https://placehold.co/300x200/b23c2c/fff?text=四时3-请替换"></div><div class="modal-audio"><audio controls src="sishi.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>春夏秋冬，四季景致，优雅细腻。</p></div><div class="info-tip">替换</div></div></div>
+<div id="modal-chenshang" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">《趁赏花灯》</div><div class="modal-media"><img src="https://placehold.co/300x200/8b694c/fff?text=花灯1-请替换"><img src="https://placehold.co/300x200/5a3e2b/fff?text=花灯2-请替换"><img src="https://placehold.co/300x200/b23c2c/fff?text=花灯3-请替换"></div><div class="modal-audio"><audio controls src="chenshang.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>指套名曲，元宵佳景，曲调婉转。</p></div><div class="info-tip">替换</div></div></div>
+
+<!-- MV 4 个（视频 16:9） -->
+<div id="modal-bainiao" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">《百鸟归巢》</div><div class="modal-media"><video controls src="bainiao.mp4" style="width:100%; aspect-ratio:16/9;">您的浏览器不支持视频</video></div><div class="modal-desc"><p>央视春晚同款，南音古乐与现代舞台融合。</p></div><div class="info-tip">替换 MP4 视频文件</div></div></div>
+<div id="modal-zhaojun" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">《昭君出塞》</div><div class="modal-media"><video controls src="zhaojun.mp4" style="width:100%; aspect-ratio:16/9;"></video></div><div class="modal-desc"><p>跨界MV，南音唱腔与梨园戏影。</p></div><div class="info-tip">替换</div></div></div>
+<div id="modal-doc" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">南音纪录片</div><div class="modal-media"><video controls src="documentary.mp4" style="width:100%; aspect-ratio:16/9;"></video></div><div class="modal-desc"><p>非遗传承人访谈，珍贵影像素材。</p></div><div class="info-tip">替换</div></div></div>
+<div id="modal-teach" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">免费教学MV</div><div class="modal-media"><video controls src="teach.mp4" style="width:100%; aspect-ratio:16/9;"></video></div><div class="modal-desc"><p>南音指法基础，琵琶/洞箫入门。</p></div><div class="info-tip">替换</div></div></div>
+
+<!-- 创作 4 个（无图片，只有音频） -->
+<div id="modal-dianzi" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">电子南音《刺桐幻梦》</div><div class="modal-media"><audio controls src="dianzi.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>南音腔韵与氛围电子融合，新晋非遗创新作品。</p></div><div class="info-tip">替换音频</div></div></div>
+<div id="modal-shinei" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">室内乐《丝路南音》</div><div class="modal-media"><audio controls src="shinei.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>中西器乐交织，泉州南音乐团委约创作。</p></div><div class="info-tip">替换音频</div></div></div>
+<div id="modal-rock" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">南音摇滚</div><div class="modal-media"><audio controls src="rock.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>《梅花操》摇滚版，年轻乐队改编。</p></div><div class="info-tip">替换</div></div></div>
+<div id="modal-remix" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">南音电音Remix</div><div class="modal-media"><audio controls src="remix.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>《走马》Trap版，传统与潮流碰撞。</p></div><div class="info-tip">替换</div></div></div>
+
+<!-- 原素材 4 个 -->
+<div id="modal-gongche" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">工尺谱原稿</div><div class="modal-media"><img src="https://placehold.co/300x200/8b694c/fff?text=工尺谱1-请替换"><img src="https://placehold.co/300x200/5a3e2b/fff?text=工尺谱2-请替换"><img src="https://placehold.co/300x200/b23c2c/fff?text=工尺谱3-请替换"></div><div class="modal-desc"><p>清代南音手抄谱《指谱大全》数字化原素材。</p></div><div class="info-tip">替换图片</div></div></div>
+<div id="modal-oldrec" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">老录音</div><div class="modal-media"><audio controls src="old.mp3" style="width:100%"></audio></div><div class="modal-desc"><p>1950年代南音前辈口传曲韵。</p></div><div class="info-tip">替换音频</div></div></div>
+<div id="modal-photo" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">老照片集</div><div class="modal-media"><img src="https://placehold.co/300x200/8b694c/fff?text=老照片1-请替换"><img src="https://placehold.co/300x200/5a3e2b/fff?text=老照片2-请替换"><img src="https://placehold.co/300x200/b23c2c/fff?text=老照片3-请替换"></div><div class="modal-desc"><p>民国至80年代演出纪实。</p></div><div class="info-tip">替换图片</div></div></div>
+<div id="modal-wav" class="modal"><div class="modal-content"><button class="close-modal">&times;</button><div class="modal-title">原始曲库WAV</div><div class="modal-media"><audio controls src="master.wav" style="width:100%"></audio></div><div class="modal-desc"><p>无损格式经典曲目录音，供再创作使用。</p></div><div class="info-tip">替换音频</div></div></div>
+
+<!-- ============================================================ -->
+<!-- ===== JavaScript 功能 ===== -->
+<script>
+    // 1. 移动端菜单
+    const menuBtn = document.getElementById('mobileMenu');
+    const navLinksEl = document.getElementById('navLinks');
+    if(menuBtn) menuBtn.addEventListener('click', ()=>navLinksEl.classList.toggle('active'));
+    document.querySelectorAll('.nav-links a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if(href && href.startsWith('#')){
+                e.preventDefault();
+                const targetId = href.substring(1);
+                const target = document.getElementById(targetId);
+                if(target){ target.scrollIntoView({ behavior:'smooth', block:'start' }); if(navLinksEl.classList.contains('active')) navLinksEl.classList.remove('active'); }
+            }
+        });
+    });
+
+    // 2. 轮播图
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const indicators = document.getElementById('indicators');
+    slides.forEach((_, i) => {
+        const dot = document.createElement('span');
+        if(i===0) dot.classList.add('active');
+        dot.addEventListener('click', ()=>goToSlide(i));
+        indicators.appendChild(dot);
+    });
+    function goToSlide(n) {
+        slides.forEach(s=>s.classList.remove('active'));
+        document.querySelectorAll('.carousel-indicators span').forEach(d=>d.classList.remove('active'));
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        document.querySelectorAll('.carousel-indicators span')[currentSlide].classList.add('active');
+    }
+    document.getElementById('prevSlide').addEventListener('click', ()=>goToSlide(currentSlide-1));
+    document.getElementById('nextSlide').addEventListener('click', ()=>goToSlide(currentSlide+1));
+    setInterval(()=>goToSlide(currentSlide+1), 5000);
+
+    // 3. 模态框控制
+    const modals = document.querySelectorAll('.modal');
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('click', ()=>{
+            const modalId = card.getAttribute('data-modal');
+            if(modalId) {
+                const modal = document.getElementById(modalId);
+                if(modal) modal.style.display = 'flex';
+            }
+        });
+    });
+    modals.forEach(modal => {
+        const closeBtn = modal.querySelector('.close-modal');
+        if(closeBtn) closeBtn.addEventListener('click', ()=>modal.style.display='none');
+        modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none'; });
+    });
+
+    // 4. 灯箱（图片和视频放大）
+    const lightbox = document.getElementById('lightbox');
+    const lightboxContent = document.getElementById('lightboxContent');
+
+    function openLightbox(element) {
+        // 清空内容
+        lightboxContent.innerHTML = '';
+        let clone;
+        if (element.tagName === 'IMG') {
+            // 图片放大
+            clone = document.createElement('img');
+            clone.src = element.src;
+            clone.alt = element.alt || '';
+            lightboxContent.appendChild(clone);
+        } else if (element.tagName === 'VIDEO') {
+            // 视频放大：克隆原视频元素，保留控制条和当前播放时间
+            clone = element.cloneNode(true);
+            // 确保继承当前播放进度（如果正在播放）
+            if (element.currentTime) {
+                clone.currentTime = element.currentTime;
+            }
+            // 如果原视频正在播放，自动播放
+            if (!element.paused) {
+                clone.autoplay = true;
+            }
+            // 设置样式自适应
+            clone.style.width = '100%';
+            clone.style.height = 'auto';
+            clone.style.maxHeight = '90vh';
+            clone.controls = true;
+            lightboxContent.appendChild(clone);
+        } else {
+            return;
+        }
+        lightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // 禁止滚动
+    }
+
+    function closeLightbox(e) {
+        if (e && e.target !== e.currentTarget && e.target.className !== 'lightbox-close') return;
+        lightbox.style.display = 'none';
+        document.body.style.overflow = '';
+        // 暂停视频播放以释放资源
+        const video = lightboxContent.querySelector('video');
+        if (video) video.pause();
+        lightboxContent.innerHTML = '';
+    }
+
+    // 监听模态框内的图片和视频点击（事件委托）
+    document.addEventListener('click', function(e) {
+        const target = e.target;
+        // 检查是否在模态框内
+        const modal = target.closest('.modal');
+        if (!modal) return;
+        // 检查点击的是图片或视频
+        if (target.tagName === 'IMG' || target.tagName === 'VIDEO') {
+            e.stopPropagation(); // 防止触发模态框关闭
+            openLightbox(target);
+        }
+    });
+
+    // 键盘 ESC 关闭灯箱
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && lightbox.style.display === 'flex') {
+            closeLightbox(e);
+        }
+    });
+
+    // 5. 论坛（点赞+留言）
+    const forumData = [
+        { id:0, title:'🎋 泉州南音如何吸引年轻传承人？', meta:'回复 12 · 昨日热议', likes:0, comments:[] },
+        { id:1, title:'🎵 工尺谱数字化保护与创新', meta:'回复 8 · 精华帖', likes:0, comments:[] },
+        { id:2, title:'🏮 南音与当代戏曲、流行跨界案例征集', meta:'回复 24 · 热门', likes:0, comments:[] },
+        { id:3, title:'🎶 非遗音乐创作大赛公告 | 南音新声', meta:'官方活动 · 奖金征曲', likes:0, comments:[] }
+    ];
+    let stored = localStorage.getItem('forumData');
+    if(stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            forumData.forEach((item, idx) => {
+                if(parsed[idx]) {
+                    item.likes = parsed[idx].likes || 0;
+                    item.comments = parsed[idx].comments || [];
+                }
+            });
+        } catch(e) {}
+    }
+    let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+
+    function renderForum() {
+        const container = document.getElementById('forumList');
+        if(!container) return;
+        container.innerHTML = '';
+        forumData.forEach((post, idx) => {
+            const div = document.createElement('div');
+            div.className = 'forum-post';
+            div.innerHTML = `
+                <div class="post-header">
+                    <span class="post-title">${post.title}</span>
+                    <span class="post-meta">${post.meta}</span>
+                </div>
+                <div class="post-actions">
+                    <button class="like-btn" data-idx="${idx}"><i class="fas fa-heart"></i> 点赞 <span class="like-count">${post.likes}</span></button>
+                </div>
+                <div class="comment-area">
+                    <textarea placeholder="写留言..." id="commentInput_${idx}" rows="2"></textarea>
+                    <button onclick="addComment(${idx})">提交留言</button>
+                    <div class="comment-list" id="commentList_${idx}">
+                        ${post.comments.map(c => `<div class="comment-item"><strong>弦友</strong>：${c}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.dataset.idx);
+                if(likedPosts[idx]) {
+                    alert('您已经点过赞啦！');
+                    return;
+                }
+                forumData[idx].likes += 1;
+                likedPosts[idx] = true;
+                localStorage.setItem('forumData', JSON.stringify(forumData));
+                localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+                renderForum();
+            });
+        });
+    }
+    window.addComment = function(idx) {
+        const input = document.getElementById(`commentInput_${idx}`);
+        const text = input.value.trim();
+        if(!text) return alert('请输入留言内容');
+        forumData[idx].comments.push(text);
+        localStorage.setItem('forumData', JSON.stringify(forumData));
+        renderForum();
+    };
+    renderForum();
+
+    // 6. 记忆配对游戏
+    const pairs = [
+        { name:'琵琶', icon:'fa-guitar' },
+        { name:'洞箫', icon:'fa-drumstick-bite' },
+        { name:'三弦', icon:'fa-music' },
+        { name:'二弦', icon:'fa-drum' },
+        { name:'响盏', icon:'fa-bell' },
+        { name:'小叫', icon:'fa-volume-up' },
+        { name:'双铃', icon:'fa-hand-peace' },
+        { name:'四宝', icon:'fa-hands' }
+    ];
+    let gameCards = [], flippedIdx = [], matchedCount = 0, lock = false;
+    let timerInterval = null, seconds = 0, isGameFinished = false;
+    const matchSpan = document.getElementById('matchCount');
+    const totalSpan = document.getElementById('totalPairs');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const winDiv = document.getElementById('winMessage');
+    totalSpan.innerText = pairs.length;
+
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    function initGame() {
+        if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+        seconds = 0;
+        timerDisplay.textContent = '00:00';
+        isGameFinished = false;
+        winDiv.innerHTML = '';
+        let deck = [];
+        pairs.forEach((p, idx) => {
+            deck.push({ id: idx, icon: p.icon, matched: false, key: idx });
+            deck.push({ id: idx, icon: p.icon, matched: false, key: idx });
+        });
+        gameCards = shuffle(deck);
+        flippedIdx = [];
+        matchedCount = 0;
+        lock = false;
+        matchSpan.innerText = matchedCount;
+        renderGameBoard();
+        timerInterval = setInterval(() => {
+            seconds++;
+            const mins = String(Math.floor(seconds/60)).padStart(2,'0');
+            const secs = String(seconds%60).padStart(2,'0');
+            timerDisplay.textContent = `${mins}:${secs}`;
+        }, 1000);
+    }
+    function renderGameBoard() {
+        const board = document.getElementById('memoryBoard');
+        if(!board) return;
+        board.innerHTML = '';
+        gameCards.forEach((card, idx) => {
+            const div = document.createElement('div');
+            div.classList.add('memory-card');
+            if(card.matched) {
+                div.classList.add('matched');
+                div.innerHTML = `<i class="fas ${card.icon}" style="font-size:2rem;"></i>`;
+            } else if(flippedIdx.includes(idx)) {
+                div.classList.add('flipped');
+                div.innerHTML = `<i class="fas ${card.icon}" style="font-size:2rem;"></i>`;
+            } else {
+                div.innerHTML = '❓';
+            }
+            div.addEventListener('click', () => onCardClick(idx));
+            board.appendChild(div);
+        });
+    }
+    function onCardClick(idx) {
+        if(lock || isGameFinished) return;
+        if(gameCards[idx].matched) return;
+        if(flippedIdx.includes(idx)) return;
+        if(flippedIdx.length === 2) return;
+        flippedIdx.push(idx);
+        renderGameBoard();
+        if(flippedIdx.length === 2) {
+            lock = true;
+            const a = gameCards[flippedIdx[0]];
+            const b = gameCards[flippedIdx[1]];
+            if(a.key === b.key && flippedIdx[0] !== flippedIdx[1]) {
+                a.matched = true;
+                b.matched = true;
+                matchedCount++;
+                matchSpan.innerText = matchedCount;
+                flippedIdx = [];
+                renderGameBoard();
+                lock = false;
+                if(matchedCount === pairs.length) {
+                    isGameFinished = true;
+                    if(timerInterval) clearInterval(timerInterval);
+                    winDiv.innerHTML = '🏆 妙哉！您已通晓南音八器，雅韵天成！ 🏆  🎉 用时 ' + timerDisplay.textContent;
+                    document.body.style.transition = 'background 0.5s';
+                    document.body.style.background = '#f7e9db';
+                    setTimeout(() => document.body.style.background = '', 1000);
+                }
+            } else {
+                setTimeout(() => {
+                    flippedIdx = [];
+                    renderGameBoard();
+                    lock = false;
+                }, 800);
+            }
+        }
+    }
+    document.getElementById('resetGameBtn').addEventListener('click', initGame);
+    initGame();
+</script>
+</body>
+</html>
